@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内部资料库 - 请输入密码</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 90%; }
+        h2 { color: #333; margin-bottom: 20px; }
+        input { width: 80%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #007bff; }
+        button { background-color: #007bff; color: white; border: none; padding: 12px 25px; font-size: 16px; border-radius: 5px; cursor: pointer; width: 100%; transition: 0.3s; }
+        button:hover { background-color: #0056b3; }
+        #error-msg { color: red; margin-top: 10px; display: none; font-size: 14px; }
+        
+        /* 内容区域样式 */
+        #content-area { display: none; text-align: left; }
+        .file-item { display: block; background: #f8f9fa; border: 1px solid #e9ecef; padding: 15px; margin-bottom: 10px; text-decoration: none; color: #333; border-radius: 5px; transition: 0.2s; }
+        .file-item:hover { background: #e2e6ea; transform: translateX(5px); }
+        .file-icon { margin-right: 10px; }
+        .logout-btn { background-color: #6c757d; margin-top: 20px; }
+        .logout-btn:hover { background-color: #545b62; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 登录框 -->
+        <div id="login-screen">
+            <h2>🔒 资料访问权限</h2>
+            <p style="color:#666; font-size:14px;">请输入访问密码查看文件</p>
+            <input type="password" id="passInput" placeholder="在此输入密码">
+            <button onclick="checkPassword()">进入系统</button>
+            <p id="error-msg">密码错误，请重试！</p>
+        </div>
+
+        <!-- 文件列表 (隐藏) -->
+        <div id="content-area">
+            <h2>📂 可用文件列表</h2>
+            <p style="font-size:12px; color:#666; margin-bottom:20px;">点击下方链接预览或下载</p>
+            
+            <!-- 【请在这里修改你的文件链接】 -->
+            <!-- 格式：<a href="CZYA.pdf" class="file-item" target="_blank">📄 显示的文字</a> -->
+            
+            <a href="report.pdf" class="file-item" target="_blank">
+                <span class="file-icon">📄</span> 重要文件.pdf
+            </a>
+            
+            <a href="manual.pdf" class="file-item" target="_blank">
+                <span class="file-icon">📘</span> 产品使用手册.pdf
+            </a>
+
+            <!-- 如果有更多文件，复制上面那行代码，修改文件名即可 -->
+
+            <button class="logout-btn" onclick="logout()">退出登录</button>
+        </div>
+    </div>
+
+    <script>
+        // ================= 配置区域 =================
+        // 【重要】在这里修改你的密码
+        const SECRET_PASSWORD = "jinlong12"; 
+        // ===========================================
+
+        function checkPassword() {
+            const input = document.getElementById('passInput').value;
+            if (input === SECRET_PASSWORD) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('content-area').style.display = 'block';
+                sessionStorage.setItem('isLogged', 'true');
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+                // 震动效果
+                const box = document.querySelector('.container');
+                box.style.transform = 'translateX(10px)';
+                setTimeout(() => box.style.transform = 'translateX(0)', 100);
+                setTimeout(() => box.style.transform = 'translateX(-10px)', 200);
+                setTimeout(() => box.style.transform = 'translateX(0)', 300);
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('isLogged');
+            location.reload();
+        }
+
+        // 检查是否已经登录过（刷新页面保持登录）
+        if (sessionStorage.getItem('isLogged') === 'true') {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('content-area').style.display = 'block';
+        }
+        
+        // 支持按回车键登录
+        document.getElementById("passInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                checkPassword();
+            }
+        });
+    </script>
+</body>
+</html>
